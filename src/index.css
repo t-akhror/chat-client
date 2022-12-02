@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.effect{
+  cursor: pointer;
+}
+.effect:hover{
+  background: #f1f3f3;
+}
+
+.card:last-child{
+  border-bottom:none!important ;
+}

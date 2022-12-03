@@ -1,28 +1,43 @@
-import React,{useState,}from 'react'
+import React,{useState,useEffect}from 'react'
 import { useNavigate } from "react-router-dom";
+// import axios from 'axios'
 
 const Login = () => {
   const [user, setUser]=useState('');
+  const [allUsers, setAllUsers]=useState({});
   const [error, setError]=useState('');
   const navigate = useNavigate();
 
   const getInputUserName=(e)=>{
       setUser(e.target.value)
   }
-
+  useEffect(()=>{
+    const fetchUsers=async ()=>{
+      const respone=await fetch("http://localhost:4000/api/users");
+      const json=await respone.json()
+      if(respone.ok){
+        setAllUsers(json)
+      }
+      
+    } 
+    fetchUsers()
+  },[]);
   const login=async(e)=>{
     e.preventDefault();
-    const username={user}
-    console.log(user)
-      const response = await fetch('http://localhost:4000/api/users', {
+    // check user is registerd or not
+    if(allUsers.some(item=>item.name===user)){
+            navigate("/message", { state: allUsers.find(item=>item.name===user)});
+    }else{
+      // if not create new user
+      const response = await fetch('http://localhost:4000/api/users/', {
         method: 'post',
-        body: JSON.stringify(username),
+        body: JSON.stringify({user}),
         headers: {
           'Content-Type': 'application/json',
           "x-access-token": "token-value",
         }
       })
-      const json = await response.json()
+      var json = await response.json()
       console.log(response)
       if (!response.ok) {
         setError(json.error)
@@ -30,11 +45,12 @@ const Login = () => {
       }
       if (response.ok) {
         setError(null)
-        console.log('new workout added:', json)
+        console.log('new user added:', json)
       }
+      console.log('user is not avaible')
+      navigate("/message", { state: json});
+    }
 
-      navigate("/message", { state: { currentName: user } });
-    
   }
   return (
     <div className="row justify-content-center pt-5">

@@ -1,43 +1,33 @@
-import React from 'react'
+import React, { useEffect,useState} from 'react'
 
-const MsgsList = () => {
-    const allMsg=[{
-        id:1,
-        from:'Alex',
-        to:'Jonny',
-        title:'new task',
-        body:' something something something something something something something',
-        receivedTime:'21-11-2022 12:10:32'
-    },{
-        id:2,
-        from:'Jonny',
-        to:'Alex',
-        title:'workout',
-        body:' something something something something something something something',
-        receivedTime:'22-10-2022 8:33:25'
-    },{
-        id:3,
-        from:'Alex',
-        to:'Jonny',
-        title:'Dinner Time',
-        body:' something something something something something something something',
-        receivedTime:'23-11-2022 14:23:33'
-    },{
-        id:4,
-        from:'Alex',
-        to:'Jonny',
-        title:'Dinner Time',
-        body:' something something something something something something something',
-        receivedTime:'23-11-2022 5:23:33'
-    }]
+const MsgsList = ({currentUser}) => {
+    const [messages,setMessages]=useState([]);
+    const [msgs,setMsgs]=useState([]);
+    
 
-let sortedMsg = allMsg.sort((a, b) => new Date(...a.receivedTime.split('-').reverse()) - new Date(...b.receivedTime.split('-').reverse()));
+    useEffect(()=>{
+        const fetchMsgs=async ()=>{
+            const respone=await fetch("http://localhost:4000/api/messages");
+            const json=await respone.json()
+            if(respone.ok){
+              setMessages(json)
+            }
+            
+          } 
+          fetchMsgs()
+        },[]);
+        
+        // setMsgs(...msgs,messages.find(item=>item.receiver_id===currentUser.id) )
+        // console.log(msgs)
+        
+// let sortedMsg = messages.sort((a, b) => new Date(...a.receivedTime.split('-').reverse()) - new Date(...b.receivedTime.split('-').reverse()));
   return (
     <>
-    {sortedMsg.map((msg)=>(
-        <div className="card border-0 border-start border-2 my-2 rounden-0 rounded-end shadow-sm bg-body rounded" key={msg.id}>
+    { messages&&messages.map((msg)=>(
+        
+        <div className="card border-0 border-start border-2 my-2 rounden-0 rounded-end shadow-sm bg-body rounded" key={msg._id}>
         <div className="card-header border-0 d-flex justify-content-between align-items-center ">
-            <h5 className="">{msg.from}</h5>
+            <h5 className="">{msg.sender_name}</h5>
             <div className="text-muted">{msg.receivedTime}</div>
         </div>
         <div className="card-body text-secondary">
